@@ -8,12 +8,14 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+ <link rel="StyleSheet" href="res/mc.css" type="text/css"
+title="cse4413" media="screen, print"/>
 <title>Student Loan Application</title>
 </head>
 <body>
-<fieldset>
-<legend>Student Loan Calculator</legend>
 	<form action='' method='POST'>
+	<fieldset>
+	<legend>Student Loan Calculator</legend>
 		<Table>
 				<TR >
 			<TD>Grace Period Interest:</TD>
@@ -27,8 +29,9 @@
 			<TD><input id='reset' type="submit" value="Restart"/></TD>
 		</TR>
 		</Table>
-		</form>
 		</fieldset>
+		</form>
+	
 
 
 </body>
