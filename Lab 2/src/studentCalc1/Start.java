@@ -18,6 +18,10 @@ public class Start extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	String startPage="/UI.jspx";
 	String resultPage="/Result.jspx";
+	private static final String GRACE_PERIOD_INTEREST = "gracePeriodInterest";
+	private static final String MONTHLY_PAYMENTS = "monthlyPayments" ;
+	
+	
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -45,14 +49,7 @@ public class Start extends HttpServlet {
 		//Have its result cached by the browser be cached by a proxy these things are all good. Anything which is only retrieving data
 		//(particularly public data) should really be a GET. The server should send sensible Last-Modified: and Expires: headers to allow caching if required.
 		// Making it a POST request, however, prevents web accelerators or reloads from re-triggering the action accidentally.
-		if(request.getParameter("submit") == null)
-		{
-			request.getRequestDispatcher(startPage).forward(request,response);
-		}
-		else if(request.getParameter("submit").equals("Submit"))
-		{
-			request.getRequestDispatcher(resultPage).forward(request,response);
-		}
+		
 
 		response.setContentType("text/plain");
 		Writer resOut = response.getWriter();
@@ -78,11 +75,8 @@ public class Start extends HttpServlet {
 		double gracePeriod = Double.parseDouble(getServletContext().getInitParameter("gracePeriod"));
 		double monthlyPayment = 0.0;
 		double graceInterest = 0.0;
+		double graceMonthlyPayment = 0.0;
 
-		//if (clientIP == 0:0:0:0:0:0:0:1)
-		//{
-		//	block()
-		//}
 		if (queryPrincipal != null){
 			principal = Double.parseDouble(queryPrincipal);
 		}
@@ -92,17 +86,13 @@ public class Start extends HttpServlet {
 		if (queryInterest != null){
 			interest = Double.parseDouble(queryInterest);
 		}
-
-
-		graceInterest = principal * ((interest + fixedInterest) / 12) * gracePeriod;
+		
 		monthlyPayment = (((interest/100) / 12) * principal) / 
 				(1 - (Math.pow(1 + ((interest/100) / 12), -period)));
 		monthlyPayment = round(monthlyPayment,1);
-		monthlyPayment = monthlyPayment + (graceInterest/ gracePeriod);
-		monthlyPayment = round(monthlyPayment,1);
-
-
-
+		graceInterest = principal * ((interest/100 + fixedInterest/100) / 12) * gracePeriod;
+		graceMonthlyPayment = monthlyPayment + (graceInterest/ gracePeriod);
+		/*
 		resOut.write("Hello, World!\n");
 		resOut.write("Client IP: " + clientIP + "\n");
 		resOut.write("Client Port: " + clientPort + "\n");
@@ -112,17 +102,32 @@ public class Start extends HttpServlet {
 		resOut.write("Query String: " + queryString + "\n");
 		resOut.write("Query Param foo=" + foo + "\n");
 		resOut.write("Request URI: " + URI + "\n");
-		//resOut.write("Context: " + context + "\n");
 		resOut.write("Request Servlet Path: " + servletPath + "\n");
 		resOut.write("---- Monthly payments ----" + "\n");
 		resOut.write("Based on Principal=" + principal + " Period=" + period + " Interest=" + interest);
 		resOut.write("\n" + "Monthly payments: " + monthlyPayment);
-
+		*/
 		if (URI.contains(invalidPath))
 		{
 			response.sendRedirect(this.getServletContext().getContextPath() + "/Start");
 		}
-
+		
+		if(request.getParameter("gracePeriod")==null)
+		{
+			graceInterest = interest;
+			graceMonthlyPayment = monthlyPayment;
+		}
+		request.setAttribute(GRACE_PERIOD_INTEREST, round(graceInterest, 1));
+		request.setAttribute(MONTHLY_PAYMENTS,round(graceMonthlyPayment, 1));
+		
+		if(request.getParameter("submit") == null)
+		{
+			request.getRequestDispatcher(startPage).forward(request,response);
+		}
+		else if(request.getParameter("submit").equals("Submit"))
+		{
+			request.getRequestDispatcher(resultPage).forward(request,response);
+		}
 	}
 
 	/**

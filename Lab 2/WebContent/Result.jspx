@@ -8,23 +8,24 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Result Page</title>
+<title>Student Loan Application</title>
 </head>
 <body>
 <fieldset>
 <legend>Student Loan Calculator</legend>
 	<form action='' method='POST'>
 		<Table>
-				<TR>
-					<TD><label for="interest">Grace Period Interest: </label><br />
-					</TD>
-				</TR>
-				<TR>
-					<TD><label for="interest">Monthly Payments: </label><br /></TD>
-				</TR>
-				<TR>
-					<TD><input name='restart' type="submit" value="Restart" /></TD>
-				</TR>
+				<TR >
+			<TD>Grace Period Interest:</TD>
+			<td>$${requestScope['gracePeriodInterest']}</td>
+		</TR>
+		<TR>
+			<TD>Monthly Payments:</TD>
+			<td>$${requestScope['monthlyPayments']}</td>
+		</TR>
+		<TR>
+			<TD><input id='reset' type="submit" value="Restart"/></TD>
+		</TR>
 		</Table>
 		</form>
 		</fieldset>

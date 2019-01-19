@@ -8,11 +8,11 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title>Student Loan Calculator</title>
+<title>Student Loan Application</title>
 </head>
 <body>
 	<fieldset>
-		<legend>Student Loan Application</legend>
+		<legend>Student Loan Calculator</legend>
 		<form action='' method='POST'>
 			<TABLE>
 				<TR>
