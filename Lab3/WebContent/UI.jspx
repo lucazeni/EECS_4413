@@ -13,14 +13,14 @@
 <head>
  <link rel="StyleSheet" href="res/mc.css" type="text/css"
 title="cse4413" media="screen, print"/>
-<title>Student Loan Application</title>
+<title>${applicationScope['legendName']}</title>
 </head>
 <body>
 	
 		
 		<form action='' method='POST'>
 		<fieldset>
-		<legend>Student Loan Calculator</legend>
+		<legend>${applicationScope['legendName']}</legend>
 			<TABLE>
 				<TR>
 					<TD><label for="principal">Principal

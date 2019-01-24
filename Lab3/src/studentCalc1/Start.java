@@ -24,6 +24,7 @@ public class Start extends HttpServlet {
 	private static final String INTEREST = "interest";
 	private static final String PERIOD = "period";
 	private static final String GRACE_CHECKED = "graceChecked";
+	private static final String LEGEND_NAME = "legendName";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -71,6 +72,7 @@ public class Start extends HttpServlet {
 		
 		if(request.getParameter("submit") == null)
 		{
+			request.getServletContext().setAttribute(LEGEND_NAME, "Student Loan Calculator");
 			request.getSession().setAttribute(INTEREST, interest);
 			request.getSession().setAttribute(PRINCIPAL, principal);
 			request.getSession().setAttribute(PERIOD, period);
@@ -84,8 +86,8 @@ public class Start extends HttpServlet {
 				graceInterest = interest;
 				graceMonthlyPayment = monthlyPayment;
 			}
-			request.setAttribute(GRACE_PERIOD_INTEREST, round(graceInterest, 1));
-			request.setAttribute(MONTHLY_PAYMENTS,round(graceMonthlyPayment, 1));
+			request.setAttribute(GRACE_PERIOD_INTEREST, graceInterest);
+			request.setAttribute(MONTHLY_PAYMENTS,graceMonthlyPayment);
 			request.getSession().setAttribute(INTEREST, interest);
 			request.getSession().setAttribute(PRINCIPAL, principal);
 			request.getSession().setAttribute(PERIOD, period);
