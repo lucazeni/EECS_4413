@@ -60,7 +60,7 @@ public class Start extends HttpServlet {
 		if (queryPrincipal != null){principal = Integer.parseInt(queryPrincipal);}
 		if (queryPeriod != null){period = Integer.parseInt(queryPeriod);}
 		if (queryInterest != null){interest = Double.parseDouble(queryInterest);}
-
+		System.out.println(principal + " " + interest + " " + period);
 		//calculate formula
 		monthlyPayment = (((interest/100) / 12) * principal) / 
 						 (1 - (Math.pow(1 + ((interest/100) / 12), -period)));
@@ -71,6 +71,9 @@ public class Start extends HttpServlet {
 		
 		if(request.getParameter("submit") == null)
 		{
+			request.getSession().setAttribute(INTEREST, interest);
+			request.getSession().setAttribute(PRINCIPAL, principal);
+			request.getSession().setAttribute(PERIOD, period);
 			request.getRequestDispatcher(startPage).forward(request,response);
 		}
 		else if(request.getParameter("submit").equals("Submit")) // click submit
