@@ -36,68 +36,59 @@ public class Start extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+		// intialize
 		response.setContentType("text/plain");
 		Writer resOut = response.getWriter();
 		String queryPrincipal = request.getParameter("principal");
 		String queryPeriod = request.getParameter("period");
 		String queryInterest = request.getParameter("interest");
-		int principal_z = Integer.parseInt(getServletContext().getInitParameter("principal"));
-		int period_z = Integer.parseInt(getServletContext().getInitParameter("period"));
-		double interest_z = Double.parseDouble(getServletContext().getInitParameter("interest"));
+		int principal = Integer.parseInt(getServletContext().getInitParameter("principal"));
+		int period = Integer.parseInt(getServletContext().getInitParameter("period"));
+		double interest = Double.parseDouble(getServletContext().getInitParameter("interest"));
 		double fixedInterest = Double.parseDouble(getServletContext().getInitParameter("fixedInterest"));
 		double gracePeriod = Double.parseDouble(getServletContext().getInitParameter("gracePeriod"));
 		double monthlyPayment = 0.0;
 		double graceInterest = 0.0;
 		double graceMonthlyPayment = 0.0;
-		int graceChecked_z = 0;
+		int graceChecked = 0;
 
+		//check session/parameters and update variables affected
+		if(request.getSession().getAttribute(GRACE_CHECKED) != null){graceChecked = (int) request.getSession().getAttribute(GRACE_CHECKED);}
+		if(request.getSession().getAttribute(PRINCIPAL) != null){principal = (int) request.getSession().getAttribute(PRINCIPAL);}
+		if(request.getSession().getAttribute(INTEREST) != null){interest = (double) request.getSession().getAttribute(INTEREST);}
+		if(request.getSession().getAttribute(PERIOD) != null){period = (int) request.getSession().getAttribute(PERIOD);}
+		if (queryPrincipal != null){principal = Integer.parseInt(queryPrincipal);}
+		if (queryPeriod != null){period = Integer.parseInt(queryPeriod);}
+		if (queryInterest != null){interest = Double.parseDouble(queryInterest);}
 
-		if(request.getSession().getAttribute(GRACE_CHECKED) != null){graceChecked_z = (int) request.getSession().getAttribute(GRACE_CHECKED);}
-		if(request.getSession().getAttribute(PRINCIPAL) != null){principal_z = (int) request.getSession().getAttribute(PRINCIPAL);}
-		if(request.getSession().getAttribute(INTEREST) != null){interest_z = (double) request.getSession().getAttribute(INTEREST);}
-		if(request.getSession().getAttribute(PERIOD) != null){period_z = (int) request.getSession().getAttribute(PERIOD);}
-		if (queryPrincipal != null){principal_z = Integer.parseInt(queryPrincipal);}
-		if (queryPeriod != null){period_z = Integer.parseInt(queryPeriod);}
-		if (queryInterest != null){interest_z = Double.parseDouble(queryInterest);}
-
-
-
-
-		monthlyPayment = (((interest_z/100) / 12) * principal_z) / 
-				(1 - (Math.pow(1 + ((interest_z/100) / 12), -period_z)));
+		//calculate formula
+		monthlyPayment = (((interest/100) / 12) * principal) / 
+						 (1 - (Math.pow(1 + ((interest/100) / 12), -period)));
 		monthlyPayment = round(monthlyPayment,1);
-		graceInterest = principal_z * ((interest_z/100 + fixedInterest/100) / 12) * gracePeriod;
+		graceInterest = principal * ((interest/100 + fixedInterest/100) / 12) * gracePeriod;
 		graceMonthlyPayment = monthlyPayment + (graceInterest/ gracePeriod);
 
-		if(request.getParameter("graceEnabled") == null)
-		{
-			graceInterest = interest_z;
-			graceMonthlyPayment = monthlyPayment;
-
-		}
-		request.setAttribute(GRACE_PERIOD_INTEREST, round(graceInterest, 1));
-		request.setAttribute(MONTHLY_PAYMENTS,round(graceMonthlyPayment, 1));
-		request.getSession().setAttribute(INTEREST, interest_z);
-		request.getSession().setAttribute(PRINCIPAL, principal_z);
-		request.getSession().setAttribute(PERIOD, period_z);
-
+		
 		if(request.getParameter("submit") == null)
 		{
 			request.getRequestDispatcher(startPage).forward(request,response);
 		}
-		else if(request.getParameter("submit").equals("Submit"))
+		else if(request.getParameter("submit").equals("Submit")) // click submit
 		{
-			if(request.getParameter("graceEnabled")==null)
+			graceChecked = isChecked(request);
+			if(graceChecked == 0)
 			{
-				graceChecked_z = 0;
+				graceInterest = interest;
+				graceMonthlyPayment = monthlyPayment;
 			}
-			else if(request.getParameter("graceEnabled").equals("on"))
-			{
-				graceChecked_z = 1;
-			}
-			request.getSession().setAttribute(GRACE_CHECKED, graceChecked_z);
-			request.getRequestDispatcher(resultPage).forward(request,response);
+			request.setAttribute(GRACE_PERIOD_INTEREST, round(graceInterest, 1));
+			request.setAttribute(MONTHLY_PAYMENTS,round(graceMonthlyPayment, 1));
+			request.getSession().setAttribute(INTEREST, interest);
+			request.getSession().setAttribute(PRINCIPAL, principal);
+			request.getSession().setAttribute(PERIOD, period);
+			request.getSession().setAttribute(GRACE_CHECKED, graceChecked);
+
+			request.getRequestDispatcher(resultPage).forward(request,response); //forward to the result page
 		}
 	}
 
@@ -108,8 +99,23 @@ public class Start extends HttpServlet {
 		// TODO Auto-generated method stub
 		doGet(request, response);
 	}
+
 	private static double round (double value, int precision) {
 		int scale = (int) Math.pow(10, precision);
 		return (double) Math.round(value * scale) / scale;
+
+	}
+	private static int isChecked(HttpServletRequest request)
+	{
+		int x = 0;
+		if(request.getParameter("graceEnabled")==null)
+		{
+			x = 0;
+		}
+		else if(request.getParameter("graceEnabled").equals("on"))
+		{
+			x = 1;
+		}
+		return x;
 	}
 }
