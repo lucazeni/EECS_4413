@@ -54,4 +54,8 @@ public class Loan {
 		}
 		return graceInterest;
 	}
+	public void setErrorMsg(String s)
+	{
+		errorMessage = s;
+	}
 }

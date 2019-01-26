@@ -61,8 +61,14 @@ public class Start extends HttpServlet {
 		response.setContentType("text/plain");
 		Writer resOut = response.getWriter();
 		request.getServletContext().setAttribute(LEGEND_NAME, "Student Loan Calculator");
+		principal = Integer.parseInt(getServletContext().getInitParameter("principal"));
+		period = Integer.parseInt(getServletContext().getInitParameter("period"));
+		interest = Double.parseDouble(getServletContext().getInitParameter("interest"));
 		compute(request);
 		if (request.getParameter("submit") == null) {
+			request.getSession().setAttribute(INTEREST, interest);
+			request.getSession().setAttribute(PRINCIPAL, principal);
+			request.getSession().setAttribute(PERIOD, period);
 			request.getRequestDispatcher(startPage).forward(request, response);
 		} else if (request.getParameter("submit").equals("Submit")) {
 			setAttributes(request);
