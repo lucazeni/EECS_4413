@@ -23,11 +23,11 @@ title="cse4413" media="screen, print"/>
 				<TR >
 			<TD>Grace Period Interest:</TD>
 			
-			<td><f:formatNumber type="currency">${requestScope['gracePeriodInterest']}</f:formatNumber></td>
+			<td><f:formatNumber type="currency" currencySymbol="$">${requestScope['gracePeriodInterest']}</f:formatNumber></td>
 		</TR>
 		<TR>
 			<TD>Monthly Payments:</TD>
-			<td><f:formatNumber type="currency">${requestScope['monthlyPayments']}</f:formatNumber></td>
+			<td><f:formatNumber type="currency" currencySymbol="$">${requestScope['monthlyPayments']}</f:formatNumber></td>
 		</TR>
 		<TR>
 			<TD><input id='reset' type="submit" value="Recompute"/></TD>

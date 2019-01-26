@@ -1,6 +1,8 @@
 package model;
 
 public class Loan {
+	public String errorMessage;
+	public boolean errorFlag = false;
 	public Loan() {
 
 	}
@@ -14,10 +16,29 @@ public class Loan {
 		if (graceChecked == 1) {
 			monthlyPayment = monthlyPayment + (graceInterest / gracePeriod);
 		}
-		if (principal < 0 || interest < 0 || period < 0 || fixedInterest < 0 || graceInterest < 0 || gracePeriod < 0) {
-			throw new IllegalArgumentException();
-
-		}
+		errorFlag = false;
+			if (principal < 0)
+			{
+				errorMessage = "Principal must be greater than 0!";
+				errorFlag = true;
+				throw new Exception();
+			}
+			else if (period < 0)
+			{
+				errorMessage = "Period must be greater than 0!";
+				errorFlag = true;
+				throw new Exception();
+			}
+			else if (interest < 0)
+			{
+				errorFlag = true;
+				errorMessage = "Interest must be greater than 0!";
+				throw new Exception();
+			}
+			else
+			{
+				errorMessage = "";
+			}
 		return monthlyPayment;
 
 	}
@@ -30,11 +51,6 @@ public class Loan {
 			graceInterest = principal * ((totalInterest / 100) / 12) * gracePeriod;
 		} else {
 			graceInterest = 0;
-		}
-
-		if (principal < 0 || interest < 0 || period < 0 || fixedInterest < 0 || gracePeriod < 0) {
-			throw new IllegalArgumentException();
-
 		}
 		return graceInterest;
 	}

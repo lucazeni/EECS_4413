@@ -27,6 +27,8 @@ public class Start extends HttpServlet {
 	private static final String GRACE_CHECKED = "graceChecked";
 	private static final String LEGEND_NAME = "legendName";
 	private static final String MODEL = "model";
+	private static final String ERROR_MESSAGE = "errorMessage";
+	private static final String ERROR_FLAG = "errorFlag";
 	private Loan loan;
 	private int principal;
 	private int period;
@@ -59,23 +61,19 @@ public class Start extends HttpServlet {
 		response.setContentType("text/plain");
 		Writer resOut = response.getWriter();
 		request.getServletContext().setAttribute(LEGEND_NAME, "Student Loan Calculator");
-		principal = Integer.parseInt(getServletContext().getInitParameter("principal"));
-		period = Integer.parseInt(getServletContext().getInitParameter("period"));
-		interest = Double.parseDouble(getServletContext().getInitParameter("interest"));
 		compute(request);
 		if (request.getParameter("submit") == null) {
-			
-			request.getSession().setAttribute(INTEREST, interest);
-			request.getSession().setAttribute(PRINCIPAL, principal);
-			request.getSession().setAttribute(PERIOD, period);
-			
 			request.getRequestDispatcher(startPage).forward(request, response);
-		} else if (request.getParameter("submit").equals("Submit")) 
-		{
-			setAttributes(request); 
-			request.getRequestDispatcher(resultPage).forward(request, response);
+		} else if (request.getParameter("submit").equals("Submit")) {
+			setAttributes(request);
+			if (loan.errorFlag == false) {
+				request.getRequestDispatcher(resultPage).forward(request, response);
+			} else {
+				request.getRequestDispatcher(startPage).forward(request, response);
+			}
 		}
 	}
+
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse
 	 *      response)
@@ -93,13 +91,14 @@ public class Start extends HttpServlet {
 		request.getSession().setAttribute(PRINCIPAL, principal);
 		request.getSession().setAttribute(PERIOD, period);
 		request.getSession().setAttribute(GRACE_CHECKED, graceChecked);
+		request.getSession().setAttribute(ERROR_MESSAGE, loan.errorMessage);
+		request.getSession().setAttribute(ERROR_FLAG, loan.errorFlag);
 	}
 
 	public void compute(HttpServletRequest request) {
-
 		fixedInterest = Double.parseDouble(getServletContext().getInitParameter("fixedInterest"));
 		gracePeriod = Double.parseDouble(getServletContext().getInitParameter("gracePeriod"));
-		
+
 		if (request.getSession().getAttribute(GRACE_CHECKED) != null) {
 			graceChecked = (int) request.getSession().getAttribute(GRACE_CHECKED);
 		}
@@ -128,9 +127,10 @@ public class Start extends HttpServlet {
 			monthlyPayment = loan.computePayment(principal, interest, period, fixedInterest, graceChecked,
 					graceInterest, gracePeriod);
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.fillInStackTrace();
 		}
 	}
+
 	private static double round(double value, int precision) {
 		int scale = (int) Math.pow(10, precision);
 		return (double) Math.round(value * scale) / scale;
