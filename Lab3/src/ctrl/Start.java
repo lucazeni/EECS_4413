@@ -30,14 +30,16 @@ public class Start extends HttpServlet {
 	private static final String ERROR_MESSAGE = "errorMessage";
 	private static final String ERROR_FLAG = "errorFlag";
 	private Loan loan;
-	private int principal;
-	private int period;
-	private double interest;
-	private double fixedInterest;
-	private double gracePeriod;
+	private String principal;
+	private String period;
+	private String interest;
+	private String fixedInterest;
+	private String gracePeriod;
 	private double monthlyPayment;
 	private double graceInterest;
 	private int graceChecked;
+	private boolean error;
+	private String errorMessage;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
@@ -61,18 +63,13 @@ public class Start extends HttpServlet {
 		response.setContentType("text/plain");
 		Writer resOut = response.getWriter();
 		request.getServletContext().setAttribute(LEGEND_NAME, "Student Loan Calculator");
-		principal = Integer.parseInt(getServletContext().getInitParameter("principal"));
-		period = Integer.parseInt(getServletContext().getInitParameter("period"));
-		interest = Double.parseDouble(getServletContext().getInitParameter("interest"));
 		compute(request);
 		if (request.getParameter("submit") == null) {
-			request.getSession().setAttribute(INTEREST, interest);
-			request.getSession().setAttribute(PRINCIPAL, principal);
-			request.getSession().setAttribute(PERIOD, period);
 			request.getRequestDispatcher(startPage).forward(request, response);
 		} else if (request.getParameter("submit").equals("Submit")) {
 			setAttributes(request);
-			if (loan.errorFlag == false) {
+			
+			if (!error) {
 				request.getRequestDispatcher(resultPage).forward(request, response);
 			} else {
 				request.getRequestDispatcher(startPage).forward(request, response);
@@ -97,43 +94,71 @@ public class Start extends HttpServlet {
 		request.getSession().setAttribute(PRINCIPAL, principal);
 		request.getSession().setAttribute(PERIOD, period);
 		request.getSession().setAttribute(GRACE_CHECKED, graceChecked);
-		request.getSession().setAttribute(ERROR_MESSAGE, loan.errorMessage);
-		request.getSession().setAttribute(ERROR_FLAG, loan.errorFlag);
+		request.getSession().setAttribute(ERROR_MESSAGE, errorMessage);
+		request.getSession().setAttribute(ERROR_FLAG, error);
 	}
 
 	public void compute(HttpServletRequest request) {
-		fixedInterest = Double.parseDouble(getServletContext().getInitParameter("fixedInterest"));
-		gracePeriod = Double.parseDouble(getServletContext().getInitParameter("gracePeriod"));
+		fixedInterest = getServletContext().getInitParameter("fixedInterest");
+		gracePeriod = getServletContext().getInitParameter("gracePeriod");
 
 		if (request.getSession().getAttribute(GRACE_CHECKED) != null) {
 			graceChecked = (int) request.getSession().getAttribute(GRACE_CHECKED);
 		}
 		if (request.getSession().getAttribute(PRINCIPAL) != null) {
-			principal = (int) request.getSession().getAttribute(PRINCIPAL);
+			principal = (String) request.getSession().getAttribute(PRINCIPAL);
 		}
 		if (request.getSession().getAttribute(INTEREST) != null) {
-			interest = (double) request.getSession().getAttribute(INTEREST);
+			interest = (String) request.getSession().getAttribute(INTEREST);
 		}
 		if (request.getSession().getAttribute(PERIOD) != null) {
-			period = (int) request.getSession().getAttribute(PERIOD);
+			period = (String) request.getSession().getAttribute(PERIOD);
 		}
 		if (request.getParameter("principal") != null) {
-			principal = Integer.parseInt(request.getParameter("principal"));
+			principal = request.getParameter("principal");
 		}
 		if (request.getParameter("period") != null) {
-			period = Integer.parseInt(request.getParameter("period"));
+			period = request.getParameter("period");
 		}
 		if (request.getParameter("interest") != null) {
-			interest = Double.parseDouble(request.getParameter("interest"));
+			interest = request.getParameter("interest");
 		}
 		graceChecked = isChecked(request);
+		error = false;
 		try {
 			graceInterest = loan.computeGraceInterest(principal, gracePeriod, interest, fixedInterest, graceChecked,
 					period);
 			monthlyPayment = loan.computePayment(principal, interest, period, fixedInterest, graceChecked,
 					graceInterest, gracePeriod);
-		} catch (Exception e) {
-			e.fillInStackTrace();
+		}
+		catch (NumberFormatException e) {		//if any fields are left blank
+			if(principal.isEmpty())
+			{
+				errorMessage = "Principal field left blank!";
+			}
+			else if(interest.isEmpty())
+			{
+				errorMessage = "Interest field left blank!";
+			}
+			else if(period.isEmpty())
+			{
+				errorMessage = "Period field left blank!";
+			}
+			error = true;
+		}catch (Exception e) {
+			if(Double.parseDouble(principal) < 0)
+			{
+				errorMessage = "Principal must be greater than 0!";
+			}
+			else if(Double.parseDouble(interest) < 0)
+			{
+				errorMessage = "Interest must be greater than 0!";
+			}
+			else if(Double.parseDouble(period) < 0)
+			{
+				errorMessage = "Period must be greater than 0!";
+			}
+			error = true;
 		}
 	}
 

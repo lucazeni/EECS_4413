@@ -1,61 +1,39 @@
 package model;
 
 public class Loan {
-	public String errorMessage;
-	public boolean errorFlag = false;
+	
 	public Loan() {
 
 	}
 
-	public double computePayment(double principal, double interest, double period, double fixedInterest,
-			int graceChecked, double graceInterest, double gracePeriod) throws Exception {
+	public double computePayment(String principal, String interest, String period, String fixedInterest,
+			int graceChecked, double graceInterest, String gracePeriod) throws Exception {
 		double monthlyPayment;
-		double totalInterest = interest + fixedInterest;
-		monthlyPayment = (((totalInterest / 100) / 12) * principal)
-				/ (1 - (Math.pow(1 + ((totalInterest / 100) / 12), -period)));
+		double totalInterest = Double.parseDouble(interest) + Double.parseDouble(fixedInterest);
+		monthlyPayment = (((totalInterest / 100) / 12) * Double.parseDouble(principal)
+				/ (1 - (Math.pow(1 + ((totalInterest / 100) / 12), -Double.parseDouble(period)))));
 		if (graceChecked == 1) {
-			monthlyPayment = monthlyPayment + (graceInterest / gracePeriod);
+			monthlyPayment = monthlyPayment + (graceInterest / Double.parseDouble(gracePeriod));
 		}
-		errorFlag = false;
-			if (principal < 0)
-			{
-				errorMessage = "Principal must be greater than 0!";
-				errorFlag = true;
-				throw new Exception();
-			}
-			else if (period < 0)
-			{
-				errorMessage = "Period must be greater than 0!";
-				errorFlag = true;
-				throw new Exception();
-			}
-			else if (interest < 0)
-			{
-				errorFlag = true;
-				errorMessage = "Interest must be greater than 0!";
-				throw new Exception();
-			}
-			else
-			{
-				errorMessage = "";
-			}
+		if(Double.parseDouble(principal) < 0 || Double.parseDouble(interest) < 0 || Double.parseDouble(period) < 0)
+		{
+			throw new Exception();
+		}
 		return monthlyPayment;
 
 	}
 
-	public double computeGraceInterest(double principal, double gracePeriod, double interest, double fixedInterest,
-			int graceChecked, double period) throws Exception {
+	public double computeGraceInterest(String principal, String gracePeriod, String interest, String fixedInterest,
+			int graceChecked, String period){
 		double graceInterest;
-		double totalInterest = interest + fixedInterest;
+		double totalInterest = Double.parseDouble(interest) + Double.parseDouble(fixedInterest);
 		if (graceChecked == 1) {
-			graceInterest = principal * ((totalInterest / 100) / 12) * gracePeriod;
+			graceInterest = Double.parseDouble(principal) * ((totalInterest / 100) / 12)
+					* Double.parseDouble(gracePeriod);
 		} else {
 			graceInterest = 0;
 		}
 		return graceInterest;
 	}
-	public void setErrorMsg(String s)
-	{
-		errorMessage = s;
-	}
+
 }
