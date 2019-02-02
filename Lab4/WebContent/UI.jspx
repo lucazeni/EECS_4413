@@ -12,8 +12,7 @@
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <script type="text/javascript" src="res/mc.js">;</script>
-<link rel="StyleSheet" href="res/mc.css" type="text/css" title="cse4413"
-	media="screen, print" />
+<link rel="StyleSheet" href="res/mc2.css" type="text/css" title="cse4413" media="screen, print"/>
 <title>${applicationScope['legendName']}</title>
 </head>
 <body>
@@ -35,21 +34,21 @@
 					</td>
 				</tr>
 				<TR>
-					<TD><label for="principal">Principal
-							<div>(total loan amount after studies)</div>
-					</label></TD>
+					<TD><label for="principal">Principal<span id="principalError" class="error"></span></label>
+					<p>(total loan amount after studies)</p>
+					</TD>
 					<td><input id='principal' name='principal' type="number"
 						value="${sessionScope['principal']}" /></td>
 				</TR>
 				<TR>
-					<TD><label for="interest">Annual Interest Rate</label></TD>
+					<TD><label for="interest">Annual Interest Rate<span id="interstError" class="error"></span></label></TD>
 					<td><input id='interest' name='interest' type="number"
 						step="0.01" value="${sessionScope['interest']}" /></td>
 				</TR>
 				<TR>
-					<TD><label for="period">Period
-							<div>(total number of months)</div>
-					</label></TD>
+					<TD><label for="period">Period<span id="periodError" class="error"></span></label>
+							<p>(total number of months)</p>
+					</TD>
 					<td><input id='period' name='period' type="number" step="1"
 						value="${sessionScope['period']}" /></td>
 				</TR>

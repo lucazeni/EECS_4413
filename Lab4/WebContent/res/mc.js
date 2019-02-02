@@ -3,20 +3,32 @@
  */
 function validate() {
 	var ok = true;
-	var p = document.getElementById("principal").value;
-	if (isNaN(p) || p <= 0) {
+	var principal = document.getElementById("principal").value;
+	var interest = document.getElementById("interest").value;
+	var period = document.getElementById("period").value;
+
+	if (isNaN(principal) || principal <= 0) {
+		document.getElementById("principalError").innerHTML = "*";
 		alert("Principal invalid!");
 		ok = false;
+	} else {
+		document.getElementById("principalError").innerHTML = "";
 	}
-	p = document.getElementById("interest").value;
-	if (isNaN(p) || p <= 0 || p >= 100) {
-		alert("Interest invalid. Must be in [0,100].");
+
+	if (isNaN(interest) || interest <= 0 || interest >= 100) {
+		document.getElementById("interstError").innerHTML = "*";
+		alert("Interest invalid!");
 		ok = false;
+	} else {
+		document.getElementById("interstError").innerHTML = "";
 	}
-	p = document.getElementById("period").value;
-	if (isNaN(p) || p <= 0) {
+
+	if (isNaN(period) || period <= 0) {
+		document.getElementById("periodError").innerHTML = "*";
 		alert("Period invalid!");
 		ok = false;
+	} else {
+		document.getElementById("periodError").innerHTML = "";
 	}
 	return ok;
 }
