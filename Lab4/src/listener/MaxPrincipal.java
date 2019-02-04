@@ -45,8 +45,7 @@ public class MaxPrincipal implements HttpSessionAttributeListener {
      */
     public void updateMaxPrincipal(HttpSessionBindingEvent arg0) {
     		if (arg0.getName().equals("principal")) { 
-    		
-			double newValue = Double.parseDouble(arg0.getValue().toString());
+			double newValue = Double.parseDouble(arg0.getSession().getAttribute("principal").toString());
 			if (newValue > maxPrincipal) {
 				maxPrincipal = newValue;
 			}

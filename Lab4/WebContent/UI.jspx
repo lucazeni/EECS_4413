@@ -21,7 +21,7 @@
 <body>
 
 
-	<form action='' method='POST' onclick="return validate();">
+	<form action='' method='POST' onsubmit="return validate();">
 		<fieldset>
 			<legend>${applicationScope['legendName']}</legend>
 			<TABLE>

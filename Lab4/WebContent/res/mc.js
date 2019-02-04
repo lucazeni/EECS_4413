@@ -33,6 +33,8 @@ function validate() {
 	return ok;
 }
 	function doSimpleAjax(address){
+		 if (validate() == true)
+		{
 		 var request = new XMLHttpRequest();
 		 var data="?submit=ajax&";
 		 var principal =document.querySelector("#principal").value;
@@ -56,4 +58,5 @@ function validate() {
 		 var target = document.querySelector("#ajaxTarget");
 		 target.innerHTML = request.responseText;
 		 }
+	}
 		} 

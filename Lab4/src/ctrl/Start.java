@@ -60,7 +60,6 @@ public class Start extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
 
 		response.setContentType("application/JSON");
 		Writer resOut = response.getWriter();
@@ -82,8 +81,8 @@ public class Start extends HttpServlet {
 				request.getRequestDispatcher(startPage).forward(request, response);
 			}
 		} else if (request.getParameter("submit").equals("ajax")) {
-			
-			String x = String.format("%.2f", round(graceInterest,2));
+			request.getSession().setAttribute(PRINCIPAL, principal);
+			String x = String.format("%.2f", round(graceInterest, 2));
 			String y = String.format("%.2f", round(monthlyPayment, 2));
 			resOut.write("Grace Period Interst: $" + x + "</br>");
 			resOut.write("Monthly Payment: $" + y);
