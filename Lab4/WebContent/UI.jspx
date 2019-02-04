@@ -11,44 +11,45 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<script type="text/javascript" src="res/mc.js">;</script>
-<link rel="StyleSheet" href="res/mc2.css" type="text/css" title="cse4413" media="screen, print"/>
+<script type="text/javascript" src="res/mc.js">
+	;
+</script>
+<link rel="StyleSheet" href="res/mc2.css" type="text/css"
+	title="cse4413" media="screen, print" />
 <title>${applicationScope['legendName']}</title>
 </head>
 <body>
 
 
-	<form action='' method='POST' onsubmit="return validate();">
+	<form action='' method='POST' onclick="return validate();">
 		<fieldset>
 			<legend>${applicationScope['legendName']}</legend>
 			<TABLE>
 				<tr>
-					<td class="error">
-							<c:set var="errorFlag" scope="session"
-							value="${sessionScope['errorFlag']}" />
-							<c:choose>
+					<td class="error"><c:set var="errorFlag" scope="session"
+							value="${sessionScope['errorFlag']}" /> <c:choose>
 							<c:when test="${errorFlag eq true}">
 								${sessionScope['errorMessage']}
 							</c:when>
-							</c:choose>
-					</td>
+						</c:choose></td>
 				</tr>
 				<TR>
-					<TD><label for="principal">Principal<span id="principalError" class="error"></span></label>
-					<p>(total loan amount after studies)</p>
-					</TD>
+					<TD><label for="principal">Principal<span
+							id="principalError" class="error"></span></label>
+						<p>(total loan amount after studies)</p></TD>
 					<td><input id='principal' name='principal' type="number"
 						value="${sessionScope['principal']}" /></td>
 				</TR>
 				<TR>
-					<TD><label for="interest">Annual Interest Rate<span id="interstError" class="error"></span></label></TD>
+					<TD><label for="interest">Annual Interest Rate<span
+							id="interstError" class="error"></span></label></TD>
 					<td><input id='interest' name='interest' type="number"
 						step="0.01" value="${sessionScope['interest']}" /></td>
 				</TR>
 				<TR>
-					<TD><label for="period">Period<span id="periodError" class="error"></span></label>
-							<p>(total number of months)</p>
-					</TD>
+					<TD><label for="period">Period<span id="periodError"
+							class="error"></span></label>
+						<p>(total number of months)</p></TD>
 					<td><input id='period' name='period' type="number" step="1"
 						value="${sessionScope['period']}" /></td>
 				</TR>
@@ -58,8 +59,7 @@
 						<div>(Take advantage of 6 month grace period and include
 							grace period interest with your loan balance)</div></td>
 					<TD><c:set var="grace" scope="session"
-							value="${sessionScope['graceChecked']}" /> 
-							<c:choose>
+							value="${sessionScope['graceChecked']}" /> <c:choose>
 							<c:when test="${grace == 1}">
 								<input type="checkBox" id="graceEnabled" name="graceEnabled"
 									checked="true" />
@@ -70,8 +70,15 @@
 						</c:choose></TD>
 				</TR>
 				<TR>
+					<TD id="ajaxTarget"></TD>
+				</TR>
+				<TR>
 					<TD><input id='submit' name='submit' type="submit"
 						value="Submit" /></TD>
+
+					<td><input type='button' name='ajaxSubmit'
+						value='Submit(Ajax)'
+						onclick="doSimpleAjax('/studentCalc4/Start');return false;" /></td>
 				</TR>
 
 			</TABLE>

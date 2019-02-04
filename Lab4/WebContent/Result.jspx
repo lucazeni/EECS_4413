@@ -11,7 +11,7 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<link rel="StyleSheet" href="res/mc.css" type="text/css" title="cse4413"
+<link rel="StyleSheet" href="res/mc2.css" type="text/css" title="cse4413"
 	media="screen, print" />
 <title>${applicationScope['legendName']}</title>
 </head>

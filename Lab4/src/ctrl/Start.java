@@ -60,7 +60,9 @@ public class Start extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/plain");
+		
+
+		response.setContentType("application/JSON");
 		Writer resOut = response.getWriter();
 		request.getServletContext().setAttribute(LEGEND_NAME, "Student Loan Calculator");
 		principal = getServletContext().getInitParameter("principal");
@@ -74,14 +76,19 @@ public class Start extends HttpServlet {
 			request.getRequestDispatcher(startPage).forward(request, response);
 		} else if (request.getParameter("submit").equals("Submit")) {
 			setAttributes(request);
-			
 			if (!error) {
-				request.getSession().setAttribute(PRINCIPAL, principal);
 				request.getRequestDispatcher(resultPage).forward(request, response);
 			} else {
 				request.getRequestDispatcher(startPage).forward(request, response);
 			}
+		} else if (request.getParameter("submit").equals("ajax")) {
+			
+			String x = String.format("%.2f", round(graceInterest,2));
+			String y = String.format("%.2f", round(monthlyPayment, 2));
+			resOut.write("Grace Period Interst: $" + x + "</br>");
+			resOut.write("Monthly Payment: $" + y);
 		}
+
 	}
 
 	/**
@@ -137,32 +144,21 @@ public class Start extends HttpServlet {
 					period);
 			monthlyPayment = loan.computePayment(principal, interest, period, fixedInterest, graceChecked,
 					graceInterest, gracePeriod);
-		}
-		catch (NumberFormatException e) {		//if any fields are left blank
-			if(principal.isEmpty())
-			{
+		} catch (NumberFormatException e) { // if any fields are left blank
+			if (principal.isEmpty()) {
 				errorMessage = "Principal field left blank!";
-			}
-			else if(interest.isEmpty())
-			{
+			} else if (interest.isEmpty()) {
 				errorMessage = "Interest field left blank!";
-			}
-			else if(period.isEmpty())
-			{
+			} else if (period.isEmpty()) {
 				errorMessage = "Period field left blank!";
 			}
 			error = true;
-		}catch (Exception e) {
-			if(Double.parseDouble(principal) < 0)
-			{
+		} catch (Exception e) {
+			if (Double.parseDouble(principal) < 0) {
 				errorMessage = "Principal must be greater than 0!";
-			}
-			else if(Double.parseDouble(interest) < 0)
-			{
+			} else if (Double.parseDouble(interest) < 0) {
 				errorMessage = "Interest must be greater than 0!";
-			}
-			else if(Double.parseDouble(period) < 0)
-			{
+			} else if (Double.parseDouble(period) < 0) {
 				errorMessage = "Period must be greater than 0!";
 			}
 			error = true;

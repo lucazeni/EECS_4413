@@ -32,3 +32,28 @@ function validate() {
 	}
 	return ok;
 }
+	function doSimpleAjax(address){
+		 var request = new XMLHttpRequest();
+		 var data="?submit=ajax&";
+		 var principal =document.querySelector("#principal").value;
+		 var interest =document.querySelector("#interest").value;
+		 var period =document.querySelector("#period").value;
+		 var graceEnabled = document.querySelector("#graceEnabled").checked;
+		 data += "principal=" + principal + "&interest=" + interest + "&period=" + period;
+		 if(graceEnabled == true)
+		 {	
+			 graceEnabled = "on";
+			 data += "&graceEnabled=" + graceEnabled;
+		 }
+		 request.open("GET", (address + data), true); // creates new request
+		 request.onreadystatechange = function() { // event to be called when state changes
+		 handler(request);
+		 };
+		 request.send(); //send() sends the request to the server.
+		} 
+	function handler(request){
+		 if ((request.readyState == 4) && (request.status == 200)){
+		 var target = document.querySelector("#ajaxTarget");
+		 target.innerHTML = request.responseText;
+		 }
+		} 
