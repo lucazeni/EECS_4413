@@ -8,6 +8,10 @@
 		omit-xml-declaration="true" />
 	<html xmlns="http://www.w3.org/1999/xhtml">
 <head>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/res/mc.js">
+	;
+</script>
 <link rel="StyleSheet" href="res/mc.css" type="text/css" title="cse4413"
 	media="screen, print" />
 <title>Student Loan Application</title>
@@ -33,8 +37,12 @@
 						value="20" /></td>
 				</tr>
 				<TR>
-					<TD><input id='report' name='report' type="submit"
-						value="Report" /></TD>
+
+					<td><input type='button' name='report' value='Report'
+						onclick="doSimpleAjax('/SIS-1/Start');return false;" /></td>
+				</TR>
+				<TR>
+					<TD id="ajaxTarget"></TD>
 				</TR>
 
 			</TABLE>

@@ -54,11 +54,7 @@ public class Start extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter responseWriter = response.getWriter();
-		if (request.getParameter("report") == null) {
-
-			request.getRequestDispatcher(startPage).forward(request, response);
-		} else {
-
+		if (request.getParameter("submit") != null && request.getParameter("submit").equals("ajax")) {
 			responseWriter.println("<table border='1'>");
 			responseWriter.println("<tr>");
 			responseWriter.println("<td>Id</td>");
@@ -66,33 +62,36 @@ public class Start extends HttpServlet {
 			responseWriter.println("<td>Credits taken</td>");
 			responseWriter.println("<td>Credits to graduate</td>");
 			responseWriter.println("</tr>");
-		}
+			surname = request.getParameter("surname");
+			minCredit = request.getParameter("minCredit");
 
-		surname = request.getParameter("surname");
-		minCredit = request.getParameter("minCredit");
+			try {
+				studentList = sis.retrieveStudents(surname, minCredit);
+				Collection<StudentBean> sbean = studentList.values();
+				Iterator<StudentBean> studentIterator = sbean.iterator();
 
-		try {
-			studentList = sis.retrieveStudents(surname, minCredit);
-			Collection<StudentBean> sbean = studentList.values();
-			Iterator<StudentBean> studentIterator = sbean.iterator();
+				while (studentIterator.hasNext()) {
+					StudentBean item = studentIterator.next();
+					id = item.getSid();
+					name = item.getName();
+					creditsTaken = item.getCredit_taken();
+					creditsToGraduate = item.getCredit_graduate();
+					responseWriter.println("<tr>");
+					responseWriter.print("<td>" + name + "</td>");
+					responseWriter.print("<td>" + id + "</td>");
+					responseWriter.print("<td>" + creditsTaken + "</td>");
+					responseWriter.print("<td>" + creditsToGraduate + "</td>");
+					responseWriter.println("</tr>");
+				}
 
-			while (studentIterator.hasNext()) {
-				StudentBean item = studentIterator.next();
-				id = item.getSid();
-				name = item.getName();
-				creditsTaken = item.getCredit_taken();
-				creditsToGraduate = item.getCredit_graduate();
-				responseWriter.println("<tr>");
-				responseWriter.print("<td>" + name + "</td>");
-				responseWriter.print("<td>" + id + "</td>");
-				responseWriter.print("<td>" + creditsTaken + "</td>");
-				responseWriter.print("<td>" + creditsToGraduate + "</td>");
-				responseWriter.println("</tr>");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} else if (request.getParameter("report") == null && request.getParameter("submit") == null) {
+
+			request.getRequestDispatcher(startPage).forward(request, response);
 		}
 
 	}
