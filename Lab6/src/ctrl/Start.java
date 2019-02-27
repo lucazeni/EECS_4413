@@ -55,18 +55,19 @@ public class Start extends HttpServlet {
 		// TODO Auto-generated method stub
 		PrintWriter responseWriter = response.getWriter();
 		if (request.getParameter("submit") != null && request.getParameter("submit").equals("ajax")) {
-			responseWriter.println("<table border='1'>");
-			responseWriter.println("<tr>");
-			responseWriter.println("<td>Id</td>");
-			responseWriter.println("<td>Name</td>");
-			responseWriter.println("<td>Credits taken</td>");
-			responseWriter.println("<td>Credits to graduate</td>");
-			responseWriter.println("</tr>");
 			surname = request.getParameter("surname");
 			minCredit = request.getParameter("minCredit");
-
 			try {
+
 				studentList = sis.retrieveStudents(surname, minCredit);
+				responseWriter.println("<table border='1'>");
+				responseWriter.println("<tr>");
+				responseWriter.println("<td>Id</td>");
+				responseWriter.println("<td>Name</td>");
+				responseWriter.println("<td>Credits taken</td>");
+				responseWriter.println("<td>Credits to graduate</td>");
+				responseWriter.println("</tr>");
+
 				Collection<StudentBean> sbean = studentList.values();
 				Iterator<StudentBean> studentIterator = sbean.iterator();
 
@@ -85,8 +86,14 @@ public class Start extends HttpServlet {
 				}
 
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				if (surname.equals("") || surname.contains(" ")) {
+					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry" + "</font></p>");
+
+				} else if (minCredit.contains(".") || minCredit.equals("") || Integer.parseInt(minCredit) < 0) {
+					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Minimum Credit Taken' Entry" + "</font></p>");
+
+				}
+
 			}
 
 		} else if (request.getParameter("report") == null && request.getParameter("submit") == null) {

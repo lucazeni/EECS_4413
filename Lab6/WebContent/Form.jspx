@@ -34,7 +34,7 @@
 				</TR>
 				<tr>
 					<td><input id='minCredit' name='minCredit' type="number"
-						value="20" /></td>
+						step="1" value="20" /></td>
 				</tr>
 				<TR>
 

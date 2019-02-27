@@ -8,12 +8,12 @@ public class EnrollmentBean {
 	private ArrayList<String> students = new ArrayList<String>();
 	private int credit;
 
-	public EnrollmentBean(String cid, ArrayList<String> students, int credit)
-	{
+	public EnrollmentBean(String cid, ArrayList<String> students, int credit) {
 		this.cid = cid;
 		this.students = students;
 		this.credit = credit;
 	}
+
 	public String getCid() {
 		return cid;
 	}
