@@ -17,8 +17,8 @@
 <title>Student Loan Application</title>
 </head>
 <body>
-The exported XML can be found at:
-<p>${sessionScope['fileName']}</p>
+<p>The exported XML can be found at:</p>
+<p><a href="http://www.yahoo.com"><font color="blue" size="5px"><b>${sessionScope['fileName']}</b></font></a></p>
 </body>
 	</html>
 </jsp:root>

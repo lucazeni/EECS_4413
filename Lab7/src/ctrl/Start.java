@@ -101,12 +101,11 @@ public class Start extends HttpServlet {
 		} else if (request.getParameter("genXML") != null && request.getParameter("genXML").equals("Generate XML")) {
 			String f = "export/" + request.getSession().getId() + ".xml";
 			String filename = this.getServletContext().getRealPath("/" + f);
-			
 			try {
 				surname = request.getParameter("surname");
 				minCredit = request.getParameter("minCredit");
 				sis.export(this.surname, this.minCredit, filename);
-				request.getSession().setAttribute(FILENAME, filename);
+				request.getSession().setAttribute(FILENAME, f);
 				request.getRequestDispatcher(donePage).forward(request, response);
 			} catch (Exception e) {
 				e.printStackTrace();
