@@ -1,8 +1,5 @@
-/**
- * 
- */
-
 function doSimpleAjax(address) {
+
 	var request = new XMLHttpRequest();
 	var data = "?submit=ajax&";
 	var surname = document.querySelector("#surname").value;
@@ -12,7 +9,7 @@ function doSimpleAjax(address) {
 	request.onreadystatechange = function() { // event to be called when
 		// state changes
 		handler(request);
-	};
+	}
 	request.send(); // send() sends the request to the server.
 
 	function handler(request) {
@@ -21,4 +18,5 @@ function doSimpleAjax(address) {
 			target.innerHTML = request.responseText;
 		}
 	}
+
 }

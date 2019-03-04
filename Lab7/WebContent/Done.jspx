@@ -18,7 +18,7 @@
 </head>
 <body>
 <p>The exported XML can be found at:</p>
-<p><a href="http://www.yahoo.com"><font color="blue" size="5px"><b>${sessionScope['fileName']}</b></font></a></p>
+<p><a href="${sessionScope['filePath']}"><font color="blue" size="5px"><b>${sessionScope['fileName']}</b></font></a></p>
 </body>
 	</html>
 </jsp:root>

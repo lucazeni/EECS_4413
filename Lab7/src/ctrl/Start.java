@@ -22,7 +22,8 @@ public class Start extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	String startPage = "/Form.jspx";
 	String donePage = "/Done.jspx";
-	private static final String FILENAME = "fileName"; 
+	private static final String FILENAME = "fileName";
+	private static final String FILEPATH = "filePath";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -61,6 +62,11 @@ public class Start extends HttpServlet {
 			try {
 
 				studentList = sis.retrieveStudents(surname, minCredit);
+				Collection<StudentBean> sbean = studentList.values();
+				Iterator<StudentBean> studentIterator = sbean.iterator();
+				responseWriter.println("<tr>");
+				responseWriter.println("<td>There are " + sbean.size() + " entries." + "</td>");
+				responseWriter.println("</tr>");
 				responseWriter.println("<table border='1'>");
 				responseWriter.println("<tr>");
 				responseWriter.println("<td>Id</td>");
@@ -68,9 +74,6 @@ public class Start extends HttpServlet {
 				responseWriter.println("<td>Credits taken</td>");
 				responseWriter.println("<td>Credits to graduate</td>");
 				responseWriter.println("</tr>");
-
-				Collection<StudentBean> sbean = studentList.values();
-				Iterator<StudentBean> studentIterator = sbean.iterator();
 
 				while (studentIterator.hasNext()) {
 					StudentBean item = studentIterator.next();
@@ -87,12 +90,31 @@ public class Start extends HttpServlet {
 				}
 
 			} catch (Exception e) {
-				if (surname.equals("") || surname.contains(" ")) {
-					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry" + "</font></p>");
+				if (surname.equals("")) {
+					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Be Blank!"
+							+ "</font></p>");
 
-				} else if (minCredit.contains(".") || minCredit.equals("") || Integer.parseInt(minCredit) < 0) {
-					responseWriter
-							.print("<p><font color=\"red\">" + "Illegal 'Minimum Credit Taken' Entry" + "</font></p>");
+				} else if (containsDigit(surname)) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Name Prefix' Entry: Cannot Contain Numbers!" + "</font></p>");
+
+				} else if (!isAlpha(surname)) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Name Prefix' Entry: Cannot Contain Special Characters!" + "</font></p>");
+
+				}
+
+				else if (minCredit.contains(".")) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Must be Integer Value!" + "</font></p>");
+
+				} else if (minCredit.equals("")) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Blank!" + "</font></p>");
+
+				} else if (Integer.parseInt(minCredit) < 0) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Less Than Zero!" + "</font></p>");
 
 				}
 
@@ -101,22 +123,45 @@ public class Start extends HttpServlet {
 		} else if (request.getParameter("genXML") != null && request.getParameter("genXML").equals("Generate XML")) {
 			String f = "export/" + request.getSession().getId() + ".xml";
 			String filename = this.getServletContext().getRealPath("/" + f);
+
 			try {
 				surname = request.getParameter("surname");
 				minCredit = request.getParameter("minCredit");
 				sis.export(this.surname, this.minCredit, filename);
 				request.getSession().setAttribute(FILENAME, f);
+				request.getSession().setAttribute(FILEPATH, filename);
 				request.getRequestDispatcher(donePage).forward(request, response);
 			} catch (Exception e) {
-				e.printStackTrace();
+				if (surname.equals("")) {
+					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Be Blank!"
+							+ "</font></p>");
+
+				} else if (containsDigit(surname)) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Name Prefix' Entry: Cannot Contain Numbers!" + "</font></p>");
+
+				} else if (!isAlpha(surname)) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Name Prefix' Entry: Cannot Contain Special Characters!" + "</font></p>");
+				} else if (minCredit.contains(".")) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Must be Integer Value!" + "</font></p>");
+
+				} else if (minCredit.equals("")) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Blank!" + "</font></p>");
+
+				} else if (Integer.parseInt(minCredit) < 0) {
+					responseWriter.print("<p><font color=\"red\">"
+							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Less Than Zero!" + "</font></p>");
+
+				}
 			}
-			
-			//
+
 		} else if (request.getParameter("report") == null && request.getParameter("submit") == null) {
 
 			request.getRequestDispatcher(startPage).forward(request, response);
 		}
-
 	}
 
 	/**
@@ -129,4 +174,21 @@ public class Start extends HttpServlet {
 		doGet(request, response);
 	}
 
+	public final boolean containsDigit(String s) {
+		boolean containsDigit = false;
+
+		if (s != null && !s.isEmpty()) {
+			for (char c : s.toCharArray()) {
+				if (containsDigit = Character.isDigit(c)) {
+					break;
+				}
+			}
+		}
+
+		return containsDigit;
+	}
+
+	public boolean isAlpha(String name) {
+		return name.matches("[a-zA-Z]+");
+	}
 }

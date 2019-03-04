@@ -1,10 +1,14 @@
 package bean;
 
+import javax.xml.bind.annotation.XmlType;
+
+@XmlType(propOrder = { "sid", "name", "credit_taken", "credit_graduate", "credit_taking" })
 public class StudentBean {
 	private String sid;
 	private String name;
 	private int credit_taken;
 	private int credit_graduate;
+	private int credit_taking;
 
 	public StudentBean(String name, String sid, int credit_taken, int credit_graudate) {
 		this.sid = sid;
@@ -43,6 +47,14 @@ public class StudentBean {
 
 	public void setCredit_graduate(int credit_graduate) {
 		this.credit_graduate = credit_graduate;
+	}
+
+	public int getCredit_taking() {
+		return credit_taking;
+	}
+
+	public void setCredit_taking(int credit_taking) {
+		this.credit_taking = credit_taking;
 	}
 
 }

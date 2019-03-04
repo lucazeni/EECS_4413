@@ -42,8 +42,8 @@
 						onclick="doSimpleAjax('/SIS-2/Start');return false;" /></td>
 				</TR>
 				<TR>
-
-					<td><input type='Submit' name='genXML' value='Generate XML'/></td>
+					<td><input type='Submit' name='genXML' value='Generate XML' 
+					onclick="validate()"/></td>
 				</TR>
 				<TR>
 					<TD id="ajaxTarget"></TD>

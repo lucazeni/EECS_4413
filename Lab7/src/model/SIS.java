@@ -1,4 +1,5 @@
 package model;
+
 import java.util.Map;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public class SIS {
 
 	private StudentDAO students;
 	private EnrollmentDAO enrollments;
-	
+
 	public SIS() throws ClassNotFoundException {
 		students = new StudentDAO();
 		enrollments = new EnrollmentDAO();
@@ -40,7 +41,7 @@ public class SIS {
 				throw new NumberFormatException();
 			}
 			int credits = Integer.parseInt(credit_taken);
-			if (namePrefix.equals("") || namePrefix.contains(" ") || credits < 0) {
+			if (namePrefix.equals("") || credits < 0 || containsDigit(namePrefix) || !isAlpha(namePrefix)) {
 				throw new Exception();
 			}
 			return students.retrieveStudents(namePrefix, credits);
@@ -57,21 +58,24 @@ public class SIS {
 			throw new Exception();
 		}
 	}
-	
-	public void export(String namePrefix, String credit_taken, String filename) throws Exception
-	{
-		
-			int credits = Integer.parseInt(credit_taken);
-			List<StudentBean> list = new ArrayList<StudentBean>();
-			Collection<StudentBean> sbean = this.retrieveStudents(namePrefix, credit_taken).values();
-			Iterator<StudentBean> item = sbean.iterator();
-			while(item.hasNext())
-			{
-				list.add(item.next());
-			}
-			ListWrapper lw = new ListWrapper(namePrefix, credits, list);
+
+	public void export(String namePrefix, String credit_taken, String filename) throws Exception {
+
+		int credits = Integer.parseInt(credit_taken);
+		List<StudentBean> list = new ArrayList<StudentBean>();
+		Collection<StudentBean> sbean = this.retrieveStudents(namePrefix, credit_taken).values();
+		Iterator<StudentBean> item = sbean.iterator();
+		while (item.hasNext()) {
+			list.add(item.next());
+		}
+		ListWrapper lw = new ListWrapper(namePrefix, credits, list);
+		try {
 			JAXBContext jc = JAXBContext.newInstance(lw.getClass());
 			Marshaller marshaller = jc.createMarshaller();
+			SchemaFactory sf = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+			String path = new File(filename).getParent();
+			Schema schema = sf.newSchema(new File(path + "/SIS.xsd"));
+			marshaller.setSchema(schema);
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
 			marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
 			StringWriter sw = new StringWriter();
@@ -81,7 +85,27 @@ public class SIS {
 			System.out.println(sw.toString()); // for debugging
 			FileWriter fw = new FileWriter(filename);
 			fw.write(sw.toString());
-			fw.close();	
+			fw.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-			
+
+	public final boolean containsDigit(String s) {
+		boolean containsDigit = false;
+
+		if (s != null && !s.isEmpty()) {
+			for (char c : s.toCharArray()) {
+				if (containsDigit = Character.isDigit(c)) {
+					break;
+				}
+			}
+		}
+
+		return containsDigit;
+	}
+
+	public boolean isAlpha(String name) {
+		return name.matches("[a-zA-Z]+");
+	}
 }
