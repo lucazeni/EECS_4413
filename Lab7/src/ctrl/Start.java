@@ -17,13 +17,15 @@ import model.SIS;
 /**
  * Servlet implementation class Test
  */
-@WebServlet("/Start")
+@WebServlet({ "/Start", "/Startup/*" })
 public class Start extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	String startPage = "/Form.jspx";
 	String donePage = "/Done.jspx";
 	private static final String FILENAME = "fileName";
 	private static final String FILEPATH = "filePath";
+	private static final String ERRORMESSAGE = "errorMessage";
+	private static final String ERRORFLAG = "errorFlag";
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
@@ -34,7 +36,10 @@ public class Start extends HttpServlet {
 	private String id;
 	private String name;
 	private int creditsTaken;
+	private int creditsTaking;
 	private int creditsToGraduate;
+	private String errorMessage = "";
+	private boolean errorFlag = false;
 
 	public void init() throws ServletException {
 		try {
@@ -56,7 +61,9 @@ public class Start extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		PrintWriter responseWriter = response.getWriter();
+
 		if (request.getParameter("submit") != null && request.getParameter("submit").equals("ajax")) {
+
 			surname = request.getParameter("surname");
 			minCredit = request.getParameter("minCredit");
 			try {
@@ -73,7 +80,12 @@ public class Start extends HttpServlet {
 				responseWriter.println("<td>Name</td>");
 				responseWriter.println("<td>Credits taken</td>");
 				responseWriter.println("<td>Credits to graduate</td>");
+				responseWriter.println("<td>Credits Taking</td>");
 				responseWriter.println("</tr>");
+				errorFlag = false;
+				errorMessage = "";
+				request.getSession().setAttribute(ERRORFLAG, errorFlag);
+				request.getSession().setAttribute(ERRORMESSAGE, errorMessage);
 
 				while (studentIterator.hasNext()) {
 					StudentBean item = studentIterator.next();
@@ -81,15 +93,19 @@ public class Start extends HttpServlet {
 					name = item.getName();
 					creditsTaken = item.getCredit_taken();
 					creditsToGraduate = item.getCredit_graduate();
+					creditsTaking = item.getCredit_taking();
 					responseWriter.println("<tr>");
 					responseWriter.print("<td>" + id + "</td>");
 					responseWriter.print("<td>" + name + "</td>");
 					responseWriter.print("<td>" + creditsTaken + "</td>");
 					responseWriter.print("<td>" + creditsToGraduate + "</td>");
+					responseWriter.print("<td>" + creditsTaking + "</td>" );
 					responseWriter.println("</tr>");
 				}
 
 			} catch (Exception e) {
+				errorFlag = false;
+				errorMessage = "";
 				if (surname.equals("")) {
 					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Be Blank!"
 							+ "</font></p>");
@@ -130,38 +146,50 @@ public class Start extends HttpServlet {
 				sis.export(this.surname, this.minCredit, filename);
 				request.getSession().setAttribute(FILENAME, f);
 				request.getSession().setAttribute(FILEPATH, filename);
+				errorFlag = false;
+				errorMessage = "";
 				request.getRequestDispatcher(donePage).forward(request, response);
 			} catch (Exception e) {
+				errorFlag = true;
+
 				if (surname.equals("")) {
-					responseWriter.print("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Be Blank!"
+					errorMessage = ("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Be Blank!"
 							+ "</font></p>");
 
 				} else if (containsDigit(surname)) {
-					responseWriter.print("<p><font color=\"red\">"
-							+ "Illegal 'Name Prefix' Entry: Cannot Contain Numbers!" + "</font></p>");
-
+					errorMessage = ("<p><font color=\"red\">" + "Illegal 'Name Prefix' Entry: Cannot Contain Numbers!"
+							+ "</font></p>");
 				} else if (!isAlpha(surname)) {
-					responseWriter.print("<p><font color=\"red\">"
+
+					errorMessage = ("<p><font color=\"red\">"
 							+ "Illegal 'Name Prefix' Entry: Cannot Contain Special Characters!" + "</font></p>");
 				} else if (minCredit.contains(".")) {
-					responseWriter.print("<p><font color=\"red\">"
+
+					errorMessage = ("<p><font color=\"red\">"
 							+ "Illegal 'Minimum Credit Taken' Entry: Must be Integer Value!" + "</font></p>");
 
 				} else if (minCredit.equals("")) {
-					responseWriter.print("<p><font color=\"red\">"
-							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Blank!" + "</font></p>");
+
+					errorMessage = ("<p><font color=\"red\">" + "Illegal 'Minimum Credit Taken' Entry: Cannot Be Blank!"
+							+ "</font></p>");
 
 				} else if (Integer.parseInt(minCredit) < 0) {
-					responseWriter.print("<p><font color=\"red\">"
+
+					errorMessage = ("<p><font color=\"red\">"
 							+ "Illegal 'Minimum Credit Taken' Entry: Cannot Be Less Than Zero!" + "</font></p>");
 
 				}
+				request.getSession().setAttribute(ERRORMESSAGE, errorMessage);
+				request.getSession().setAttribute(ERRORFLAG, errorFlag);
+				request.getRequestDispatcher(startPage).forward(request, response);
 			}
 
 		} else if (request.getParameter("report") == null && request.getParameter("submit") == null) {
 
 			request.getRequestDispatcher(startPage).forward(request, response);
 		}
+		request.getSession().setAttribute(ERRORMESSAGE, errorMessage);
+		request.getSession().setAttribute(ERRORFLAG, errorFlag);
 	}
 
 	/**

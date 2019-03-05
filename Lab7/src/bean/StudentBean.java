@@ -10,12 +10,15 @@ public class StudentBean {
 	private int credit_graduate;
 	private int credit_taking;
 
-	public StudentBean(String name, String sid, int credit_taken, int credit_graudate) {
+	public StudentBean(String name, String sid, int credit_taken, int credit_graudate, int credit_taking) {
 		this.sid = sid;
 		this.name = name;
 		this.credit_taken = credit_taken;
 		this.credit_graduate = credit_graudate;
+		this.credit_taking = credit_taking;
 	}
+
+	
 
 	public String getSid() {
 		return sid;
